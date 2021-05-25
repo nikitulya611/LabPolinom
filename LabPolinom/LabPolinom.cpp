@@ -30,7 +30,14 @@ vector<string> split(string str)
 
 }
 
-
+vector<int> splitToInt(string s)
+{
+	vector<string> curr = split(s);
+	vector<int> result;
+	for (string s : curr)
+		result.push_back(atoi(s.c_str()));
+	return result;
+}
 
 void stringToPolinom(string s, List& result)
 {
@@ -74,12 +81,8 @@ void stringToPolinom(string s, List& result)
 
 void deleteEmpty(List& polinom)
 {
-	cout << "DE" << endl;
 	for (Node* it1 = polinom.begin(); it1 != nullptr;)
 	{
-		cout << "Size " << polinom.getSize() << endl;
-		cout << polinom << endl;
-		cout << "Curr: " << it1->data << endl;
 		if (it1->data.k == 0)
 		{
 			it1 = polinom.erase(it1);
@@ -93,7 +96,7 @@ void check(List& polinom)
 {
 	for (Node* it1 = polinom.begin(); it1->next != nullptr;)
 	{
-		cout << "!" << it1->data << ' ' << it1->next->data << endl;
+		//cout << "!" << it1->data << ' ' << it1->next->data << endl;
 		if (it1->data.pows == it1->next->data.pows)
 		{
 			it1->data.k += it1->next->data.k;
@@ -102,7 +105,6 @@ void check(List& polinom)
 		else it1 = it1->next;
 	}
 
-	cout << "CE";
 	deleteEmpty(polinom);
 }
 
@@ -114,7 +116,57 @@ void merge(List& l1, List& l2)
 	}
 
 	check(l1);
-	cout << endl << "END";
+}
+
+
+void add(List& l1, List& l2, List& result)
+{
+	for (Node* it = l1.begin(); it != nullptr; it = it->next)
+		result.push(it->data);
+
+	for (Node* it = l2.begin(); it != nullptr; it = it->next)
+		result.push(it->data);
+
+	check(result);
+}
+
+bool checkKoeff(int k)
+{
+	return k > 0 && k < 10;
+}
+
+void input(List& l)
+{
+	while (true)
+	{
+		Monom m;
+		cout << "Введите коэффицент: ";
+		cin >> m.k;
+		if (!m.k)
+			return;
+		int x, y, z;
+
+		do {
+			cout << "Введите степень при x: ";
+			cin >> x;
+		} while (!checkKoeff(x));
+		
+		do {
+			cout << "Введите степень при y: ";
+			cin >> y;
+		} while (!checkKoeff(y));
+
+		do {
+			cout << "Введите степень при z: ";
+			cin >> z;
+		} while (!checkKoeff(z));
+		
+		m.pows = x * 100 + y * 10 + z;
+		l.push(m);
+		cout << endl;
+	}
+
+	cout << l << endl;
 }
 
 int main()
@@ -123,21 +175,23 @@ int main()
 
 	List p1, p2;
 
-	string str;
+	cout << "1:" << endl;
+	input(p1);
+	cout << endl << "2:" << endl;
+	input(p2);
 
-	cout << "1: " << endl;
-	getline(cin, str);
-	stringToPolinom(str, p1);
+	cout << endl << endl;
 
-	cout << "2: " << endl;
-	getline(cin, str);
-	stringToPolinom(str, p2);
+	cout << "Сложение в 3-й полином: " << endl;
+	List p3;
+	add(p1, p2, p3);
+	cout << p1 << " + "<< p2 << " = "<<  p3 << endl;
 
-	cout << endl << "Before merge" << endl;
+	cout << endl << endl << "Сложение добавлением в 1-й полином: " << endl;
 
 	merge(p1, p2);
 
-	cout << endl << endl << "Result: " << endl << p1;
+	cout << "1: " << p1 << endl << "2: " << p2 << endl;
 	
     return 0;
 }
